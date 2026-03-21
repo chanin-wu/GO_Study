@@ -38,7 +38,7 @@ type B1 struct {
 
 // 要想多次绑定，可以使用 c.ShouldBindBodyWith.
 // ShouldBindBodyWith 方法通常用于处理包含请求体的请求，如 POST、PUT 等
-func SomeHandlers(c *gin.Context) {
+func ShouldBindBodyWith(c *gin.Context) {
 	objA1 := A1{}
 	objB1 := B1{}
 
@@ -49,10 +49,4 @@ func SomeHandlers(c *gin.Context) {
 	} else if errB2 := c.ShouldBindBodyWith(&objB1, binding.XML); errB2 == nil {
 		c.String(http.StatusOK, "the body should be form B2")
 	}
-}
-
-func main() {
-	router := gin.Default()
-	router.GET("/someHandlers", SomeHandlers)
-	router.Run("localhost:8080")
 }

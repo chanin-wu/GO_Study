@@ -35,9 +35,3 @@ func SomeHandler(c *gin.Context) {
 		c.String(http.StatusOK, "the body should be form B")
 	}
 }
-
-func main3() {
-	router := gin.Default()
-	router.GET("/someHandler", SomeHandler)
-	router.Run("localhost:8080")
-}

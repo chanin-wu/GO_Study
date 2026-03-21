@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main2() {
+func AsciiJSON() {
 	router := gin.Default()
 	router.GET("/someJSON", func(c *gin.Context) {
 		data := map[string]interface{}{
