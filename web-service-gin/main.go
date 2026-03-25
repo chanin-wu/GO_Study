@@ -24,7 +24,11 @@ var albums = []album{
 func main() {
 	// AsciiJSON()
 	// HttpMethod()
-	ParamInPath()
+	// ParamInPath()
+	// QuerystringParam()
+	// QueryAndPostForm()
+	// MapAsQuerystringOrPostform()
+	MultipartUrlencodedForm()
 }
 
 /* func main() {
