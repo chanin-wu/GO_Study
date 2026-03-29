@@ -28,7 +28,10 @@ func main() {
 	// QuerystringParam()
 	// QueryAndPostForm()
 	// MapAsQuerystringOrPostform()
-	MultipartUrlencodedForm()
+	// MultipartUrlencodedForm()
+	// GroupingRoutes()
+	// Redirects()
+	ApiDesign()
 }
 
 /* func main() {
