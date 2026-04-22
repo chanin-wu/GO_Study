@@ -31,7 +31,7 @@ func main() {
 	// MultipartUrlencodedForm()
 	// GroupingRoutes()
 	// Redirects()
-	ApiDesign()
+	// ApiDesign()
 }
 
 /* func main() {

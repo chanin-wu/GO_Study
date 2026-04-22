@@ -12,6 +12,9 @@ import (
 	c.PostFormMap("key") —— 从请求体中解析 key[subkey]=value 形式的键值对。
 */
 
+/* curl -X POST "http://localhost:8080/post?ids[a]=1234&ids[b]=hello" \
+-d "names[first]=thinkerou&names[second]=tianou" */
+
 func MapAsQuerystringOrPostform() {
 	router := gin.Default()
 
