@@ -14,5 +14,9 @@ func main() {
 		bindingAndValidation.POST("/loginForm", LoginForm)
 	}
 
+	{
+		binding.GET("/customValidators", CustomValidators)
+	}
+
 	router.Run(":8080")
 }
