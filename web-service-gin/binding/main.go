@@ -27,5 +27,9 @@ func main() {
 		router.POST("/binding", Binding)
 	}
 
+	{
+		binding.POST("/bindQueryOrPost", BindQueryOrPost)
+	}
+
 	router.Run(":8080")
 }
