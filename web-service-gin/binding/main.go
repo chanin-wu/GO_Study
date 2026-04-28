@@ -18,5 +18,10 @@ func main() {
 		binding.GET("/customValidators", CustomValidators)
 	}
 
+	{
+		// binding.Any("/onlyBindQueryString", OnlyBindQueryString)
+		binding.GET("/onlyBindQueryString", OnlyBindQueryString)
+	}
+
 	router.Run(":8080")
 }
