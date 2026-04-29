@@ -39,5 +39,9 @@ func main() {
 		binding.GET("/collectionFormatForArrays", CollectionFormatForArrays)
 	}
 
+	{
+		binding.GET("/bindUri/:name/:id/:email", BindUri)
+	}
+
 	router.Run(":8080")
 }
