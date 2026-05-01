@@ -44,7 +44,9 @@ func main() {
 	}
 
 	{
-		binding.GET("/bindCustomUnmarshaler", BindCustomUnmarshaler)
+		bindCustomUnmarshaler := binding.Group("/bindCustomUnmarshaler")
+		bindCustomUnmarshaler.GET("/textUnmarshaler", TextUnmarshaler)
+		bindCustomUnmarshaler.GET("/bindUnmarshaler", BindUnmarshaler)
 	}
 
 	{
