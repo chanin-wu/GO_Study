@@ -53,5 +53,9 @@ func main() {
 		binding.POST("/bindHeader", BindHeader)
 	}
 
+	{
+		binding.POST("/bindHtmlCheckbox", BindHtmlCheckbox)
+	}
+
 	router.Run(":8080")
 }
