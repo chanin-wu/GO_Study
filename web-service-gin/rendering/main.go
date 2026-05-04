@@ -1,8 +1,14 @@
 package main
 
 import (
+	"embed"
+	"html/template"
+
 	"github.com/gin-gonic/gin"
 )
+
+//go:embed templates/*
+var templateFS embed.FS
 
 func main() {
 	router := gin.Default()
@@ -55,6 +61,13 @@ func main() {
 	{
 		router.HTMLRender = createMyRender()
 		rendering.GET("/multipleTemplate", MultipleTemplate)
+	}
+
+	{
+		t := template.Must(template.ParseFS(templateFS, "templates/*.tmpl"))
+		router.SetHTMLTemplate(t)
+
+		rendering.GET("/bindSingleBinaryWithTemplate", BindSingleBinaryWithTemplate)
 	}
 
 	router.Run(":8080")
