@@ -20,5 +20,10 @@ func main() {
 		rendering.GET("/secureJson", SecureJson)
 	}
 
+	{
+		rendering.GET("/json", Json)
+		rendering.GET("/purejson", PureJson)
+	}
+
 	router.Run(":8080")
 }
