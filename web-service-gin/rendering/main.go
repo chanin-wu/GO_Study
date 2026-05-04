@@ -44,5 +44,13 @@ func main() {
 		rendering.GET("/servingDataFromReader", ServingDataFromReader)
 	}
 
+	{
+		router.LoadHTMLGlob("templates/*")
+		rendering.GET("/htmlRendering", HtmlRendering)
+
+		// router.LoadHTMLGlob("templates/**/*")
+		// rendering.GET("/posts/index", PostsIndex)
+	}
+
 	router.Run(":8080")
 }
