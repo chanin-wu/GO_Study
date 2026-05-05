@@ -14,5 +14,14 @@ func main() {
 		middleware.GET("/withoutMiddleware", WithoutMiddleware)
 	}
 
+	{
+		middleware.GET("/usingMiddleware", UsingMiddleware)
+	}
+
+	middleware.Use(Logger())
+	{
+		middleware.GET("/customMiddleware", CustomMiddleware)
+	}
+
 	router.Run(":8080")
 }
