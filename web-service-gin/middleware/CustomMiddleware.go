@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,10 +29,13 @@ func Logger() gin.HandlerFunc {
 		c.Set("example", "12345")
 
 		// before request
+		fmt.Println("Before request")
 
 		c.Next()
 
 		// after request
+		fmt.Println("After request")
+
 		latency := time.Since(t)
 		log.Print(latency)
 
@@ -45,4 +50,5 @@ func CustomMiddleware(c *gin.Context) {
 
 	// it would print: "12345"
 	log.Println(example)
+	c.JSON(http.StatusOK, example)
 }
