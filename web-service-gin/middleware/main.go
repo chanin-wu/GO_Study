@@ -2,9 +2,16 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/danielkov/gin-helmet/ginhelmet"
 	"github.com/gin-gonic/gin"
+
+	"github.com/gin-contrib/cors"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/utrack/gin-csrf"
 )
 
 func main() {
@@ -16,6 +23,31 @@ func main() {
 	// 下面两个是 全局中间件
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
+
+	// CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://example.com"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	// CSRF
+	store := cookie.NewStore([]byte("session-secret"))
+	router.Use(sessions.Sessions("mysession", store))
+
+	router.Use(csrf.Middleware(csrf.Options{
+		Secret: "csrf-token-secret",
+		ErrorFunc: func(c *gin.Context) {
+			c.String(403, "CSRF token mismatch")
+			c.Abort()
+		},
+	}))
+
+	// 限流
+	router.Use(RateLimiter())
 
 	middleware := router.Group("/middleware")
 
@@ -72,6 +104,10 @@ func main() {
 			c.Header("Permissions-Policy", "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()")
 			c.Next()
 		}, SecurityHeaders)
+	}
+
+	{
+		middleware.GET("/securityGuide", SecurityGuide)
 	}
 
 	router.Run(":8080")
