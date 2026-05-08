@@ -18,6 +18,9 @@ import (
 
 		CORS 配置
 			跨源资源共享（CORS）控制哪些外部域可以向你的 API 发出请求。配置错误的 CORS 可以允许恶意网站代表已认证用户读取你服务器的响应。
+				AllowCredentials：
+					含义：设置为 true 表示允许在跨源请求中携带身份凭证（如 cookies、HTTP 认证及客户端 SSL 证书等）。如果设置为 false，即使源站在 AllowOrigins 列表中，带有身份凭证的请求也会被阻止。需要注意的是，
+					当 AllowCredentials 为 true 时，AllowOrigins 不能设置为 *，必须指定具体的源站。
 			永远不要将 AllowOrigins: []string{"*"} 与 AllowCredentials: true 一起使用。这会告诉浏览器任何站点都可以向你的 API 发送认证请求。
 
 		CSRF 保护
@@ -25,6 +28,12 @@ import (
 			任何依赖 cookie 进行认证的状态变更端点（POST、PUT、DELETE）都需要 CSRF 保护。
 			CSRF 保护对于使用基于 cookie 认证的应用至关重要。
 			仅依赖 Authorization 头（例如 Bearer 令牌）的 API 不会受到 CSRF 攻击，因为浏览器不会自动附加这些头。
+
+				创建了一个基于 Cookie 的会话存储。cookie.NewStore 函数接受一个字节切片作为密钥，用于加密和解密存储在 Cookie 中的会话数据。这个密钥必须保密且足够复杂，以防止攻击者破解会话数据。
+				将刚刚创建的会话存储与名为 "mysession" 的会话关联起来，并将这个会话中间件应用到整个 Gin 路由器 router 上。每个请求经过这个中间件时，都会初始化或恢复与 "mysession" 相关的会话。会话对于 CSRF 防护很重要，因为 CSRF 令牌通常与会话关联。
+				Secret：这是 CSRF 令牌生成和验证所使用的密钥。与会话密钥类似，这个密钥也必须保密且唯一。不同的应用程序应该使用不同的 CSRF 密钥，以防止一个应用程序的 CSRF 漏洞影响到其他应用程序。
+				ErrorFunc：这是一个回调函数，当 CSRF 令牌验证失败时会被调用。在这个函数中，它向客户端返回一个 HTTP 403 状态码（表示禁止访问）和一条简单的错误信息 "CSRF token mismatch"，然后调用 c.Abort() 停止请求的进一步处理。
+				这确保了如果检测到 CSRF 攻击，服务器不会继续处理该请求，从而保护了服务器资源。
 
 		限流
 			限流可以防止滥用、暴力攻击和资源耗尽。

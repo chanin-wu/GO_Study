@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
-	"github.com/utrack/gin-csrf"
+	csrf "github.com/utrack/gin-csrf"
 )
 
 func main() {
@@ -26,16 +26,18 @@ func main() {
 
 	// CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://example.com"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		AllowOrigins:     []string{"https://example.com"},                     // 指定允许访问该资源的源站列表
+		AllowMethods:     []string{"GET", "POST"},                             // 定义允许的 HTTP 方法列表
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"}, // 指定允许在请求中包含的 HTTP 头字段
+		ExposeHeaders:    []string{"Content-Length"},                          // 定义哪些头字段可以被浏览器访问
+		AllowCredentials: true,                                                // 设置为 true 表示允许在跨源请求中携带身份凭证（如 cookies、HTTP 认证及客户端 SSL 证书等）
+		MaxAge:           12 * time.Hour,                                      // 指定预检请求（OPTIONS 请求）的结果可以被缓存的最长时间 12 * time.Hour 表示预检请求的结果可以被缓存 12 小时。
 	}))
 
 	// CSRF
+	// 这行代码创建了一个基于 Cookie 的会话存储。cookie.NewStore 函数接受一个字节切片作为密钥，用于加密和解密存储在 Cookie 中的会话数据
 	store := cookie.NewStore([]byte("session-secret"))
+	// 这里将刚刚创建的会话存储与名为 "mysession" 的会话关联起来，并将这个会话中间件应用到整个 Gin 路由器 router 上。每个请求经过这个中间件时，都会初始化或恢复与 "mysession" 相关的会话
 	router.Use(sessions.Sessions("mysession", store))
 
 	router.Use(csrf.Middleware(csrf.Options{
