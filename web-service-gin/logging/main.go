@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -61,6 +62,14 @@ func main() {
 
 	// r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+
+	/* ------------------------------------上下分隔------------------------------------ */
+
+	// 通过为 gin.DebugPrintRouteFunc 赋值一个函数来自定义此格式
+	// 定义路由日志格式
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+		log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
+	}
 
 	/* ------------------------------------上下分隔------------------------------------ */
 
