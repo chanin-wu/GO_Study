@@ -68,18 +68,27 @@ import (
 */
 
 func RateLimiter() gin.HandlerFunc {
+	// rate.Limiter 是 Go 标准库 golang.org/x/time/rate 包中的一个类型，用于实现速率限制逻辑
 	type client struct {
 		limiter *rate.Limiter
 	}
 
+	// mu 是一个 sync.Mutex 类型的互斥锁，用于保护对 clients 映射的并发访问。因为多个请求可能同时尝试访问和修改 clients 映射，所以需要使用互斥锁来确保数据的一致性和线程安全
+	// clients 是一个映射，键是客户端的 IP 地址（字符串类型），值是指向 client 结构体的指针。这个映射用于存储每个客户端的速率限制器。
 	var (
 		mu      sync.Mutex
 		clients = make(map[string]*client)
 	)
 
 	return func(c *gin.Context) {
+		// 获取客户端 IP 地址
 		ip := c.ClientIP()
 
+		// 首先，通过 mu.Lock() 锁定互斥锁，以确保对 clients 映射的操作是线程安全的。
+		// 然后检查 clients 映射中是否已经存在该 IP 地址对应的客户端记录。
+		// 如果不存在，则使用 rate.NewLimiter(10, 20) 创建一个新的速率限制器。
+		// 这里的 10 表示每秒允许 10 个请求，20 表示允许的突发请求数（即瞬间可以处理的最大请求数）。
+		// 最后，解锁互斥锁 mu.Unlock()
 		mu.Lock()
 		if _, exists := clients[ip]; !exists {
 			// Allow 10 requests per second with a burst of 20
@@ -88,6 +97,8 @@ func RateLimiter() gin.HandlerFunc {
 		cl := clients[ip]
 		mu.Unlock()
 
+		// 调用 cl.limiter.Allow() 方法来检查当前请求是否被允许通过速率限制。
+		// 如果不允许（即请求频率超过了设定的限制），则使用 c.AbortWithStatusJSON 方法终止请求的处理，并向客户端返回一个 HTTP 429 状态码（表示请求过多）和一个包含错误信息的 JSON 响应
 		if !cl.limiter.Allow() {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 				"error": "rate limit exceeded",
