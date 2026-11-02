@@ -2,48 +2,61 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"strconv"
+	"reflect"
 )
 
-type Name string
+type Age int
 
-func (n Name) PrefixString() Name {
-	return "挂载方法-" + n
+// 读取类型
+func ReadType() {
+	var age Age = 18
+
+	t := reflect.TypeOf(age)
+	fmt.Println(t)
+	fmt.Println(t.Name()) // 读取类型名称 Age
+	fmt.Println(t.Kind()) // 读取底层类型 int
+
+	if t.Kind() == reflect.Int {
+		fmt.Println("绝对是整数类型")
+	}
 }
 
-func (n Name) RandomString() Name {
-	return Name(strconv.Itoa(rand.Intn(10))) + n
+func (a Age) GetAge() int {
+	return int(a)
 }
 
-func MountingMethod() {
+// 修改值
+func ModifiedValue() {
+	var age Age = 18
+	value := reflect.ValueOf(&age).Elem() // 获取指针指向的值
+	if value.CanSet() && value.Kind() == reflect.Int && value.IsValid() {
+		value.SetInt(20) // 修改值
+	}
+	fmt.Println(age, age.GetAge()) // Age
 
-	var name Name = "前缀"
-
-	newName := name.PrefixString()
-	fmt.Println(newName)
-
-	RandomName := name.RandomString()
-	fmt.Println(RandomName)
+	// 类型断言.(类型)
+	v := value.Interface().(Age)
+	fmt.Println(value, v.GetAge()) // reflect.Value
 }
 
-// 1、挂载方法
-// 2、类型安全
+func (a Age) GetPerson(name string, age int) {
+	fmt.Println(name, age)
+}
+
+func CallMethod() {
+	var age Age = 18
+	value := reflect.ValueOf(age)
+	person := value.MethodByName("GetPerson")
+	if person.IsValid() {
+		fmt.Println(age)
+		person.Call([]reflect.Value{reflect.ValueOf("xiaoman"), reflect.ValueOf(26)})
+	}
+}
+
+// 1、 读取类型
+// 2、 修改值
 func main() {
-	MountingMethod()
-	TypeSafety()
-}
-
-type UID int
-type OID int
-
-func CreateType(uid UID, oid OID) (UID, OID) {
-	return uid, oid
-}
-
-func TypeSafety() {
-	var uid UID = 1
-	var oid OID = 2
-	// CreateType(oid, uid) // 传入错误的类型
-	CreateType(uid, oid)
+	ReadType()
+	ModifiedValue()
+	CallMethod()
 }
